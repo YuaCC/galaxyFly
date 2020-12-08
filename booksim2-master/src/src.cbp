@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="src" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/src" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="examples/anynet/anynet_config" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="$make -f $makefile ;cp booksim bin/Debug/src" />
+					<CompileFile command="$make -f $makefile $file;cp booksim bin/Debug/src" />
+					<Clean command="$make -f $makefile clean;cp booksim bin/Debug/src" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile ;cp booksim bin/Debug/src" />
+					<SilentBuild command="$make -f $makefile ;cp booksim bin/Debug/src &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/src" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="Makefile" />
+		<Unit filename="allocators/allocator.cpp" />
+		<Unit filename="allocators/allocator.hpp" />
+		<Unit filename="allocators/islip.cpp" />
+		<Unit filename="allocators/islip.hpp" />
+		<Unit filename="allocators/loa.cpp" />
+		<Unit filename="allocators/loa.hpp" />
+		<Unit filename="allocators/maxsize.cpp" />
+		<Unit filename="allocators/maxsize.hpp" />
+		<Unit filename="allocators/pim.cpp" />
+		<Unit filename="allocators/pim.hpp" />
+		<Unit filename="allocators/selalloc.cpp" />
+		<Unit filename="allocators/selalloc.hpp" />
+		<Unit filename="allocators/separable.cpp" />
+		<Unit filename="allocators/separable.hpp" />
+		<Unit filename="allocators/separable_input_first.cpp" />
+		<Unit filename="allocators/separable_input_first.hpp" />
+		<Unit filename="allocators/separable_output_first.cpp" />
+		<Unit filename="allocators/separable_output_first.hpp" />
+		<Unit filename="allocators/wavefront.cpp" />
+		<Unit filename="allocators/wavefront.hpp" />
+		<Unit filename="arbiters/arbiter.cpp" />
+		<Unit filename="arbiters/arbiter.hpp" />
+		<Unit filename="arbiters/matrix_arb.cpp" />
+		<Unit filename="arbiters/matrix_arb.hpp" />
+		<Unit filename="arbiters/prio_arb.cpp" />
+		<Unit filename="arbiters/prio_arb.hpp" />
+		<Unit filename="arbiters/roundrobin_arb.cpp" />
+		<Unit filename="arbiters/roundrobin_arb.hpp" />
+		<Unit filename="arbiters/tree_arb.cpp" />
+		<Unit filename="arbiters/tree_arb.hpp" />
+		<Unit filename="batchtrafficmanager.cpp" />
+		<Unit filename="batchtrafficmanager.hpp" />
+		<Unit filename="booksim.hpp" />
+		<Unit filename="booksim_config.cpp" />
+		<Unit filename="booksim_config.hpp" />
+		<Unit filename="buffer.cpp" />
+		<Unit filename="buffer.hpp" />
+		<Unit filename="buffer_state.cpp" />
+		<Unit filename="buffer_state.hpp" />
+		<Unit filename="channel.hpp" />
+		<Unit filename="config_utils.cpp" />
+		<Unit filename="config_utils.hpp" />
+		<Unit filename="credit.cpp" />
+		<Unit filename="credit.hpp" />
+		<Unit filename="flit.cpp" />
+		<Unit filename="flit.hpp" />
+		<Unit filename="flitchannel.cpp" />
+		<Unit filename="flitchannel.hpp" />
+		<Unit filename="globals.hpp" />
+		<Unit filename="injection.cpp" />
+		<Unit filename="injection.hpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="misc_utils.cpp" />
+		<Unit filename="misc_utils.hpp" />
+		<Unit filename="module.cpp" />
+		<Unit filename="module.hpp" />
+		<Unit filename="networks/anynet.cpp" />
+		<Unit filename="networks/anynet.hpp" />
+		<Unit filename="networks/cmesh.cpp" />
+		<Unit filename="networks/cmesh.hpp" />
+		<Unit filename="networks/dragonfly.cpp" />
+		<Unit filename="networks/dragonfly.hpp" />
+		<Unit filename="networks/fattree.cpp" />
+		<Unit filename="networks/fattree.hpp" />
+		<Unit filename="networks/flatfly_onchip.cpp" />
+		<Unit filename="networks/flatfly_onchip.hpp" />
+		<Unit filename="networks/fly.cpp" />
+		<Unit filename="networks/fly.hpp" />
+		<Unit filename="networks/kncube.cpp" />
+		<Unit filename="networks/kncube.hpp" />
+		<Unit filename="networks/network.cpp" />
+		<Unit filename="networks/network.hpp" />
+		<Unit filename="networks/qtree.cpp" />
+		<Unit filename="networks/qtree.hpp" />
+		<Unit filename="networks/tree4.cpp" />
+		<Unit filename="networks/tree4.hpp" />
+		<Unit filename="outputset.cpp" />
+		<Unit filename="outputset.hpp" />
+		<Unit filename="packet_reply_info.cpp" />
+		<Unit filename="packet_reply_info.hpp" />
+		<Unit filename="pipefifo.hpp" />
+		<Unit filename="power/buffer_monitor.cpp" />
+		<Unit filename="power/buffer_monitor.hpp" />
+		<Unit filename="power/power_module.cpp" />
+		<Unit filename="power/power_module.hpp" />
+		<Unit filename="power/switch_monitor.cpp" />
+		<Unit filename="power/switch_monitor.hpp" />
+		<Unit filename="random_utils.cpp" />
+		<Unit filename="random_utils.hpp" />
+		<Unit filename="rng-double.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rng_double_wrapper.cpp" />
+		<Unit filename="rng_wrapper.cpp" />
+		<Unit filename="routefunc.cpp" />
+		<Unit filename="routefunc.hpp" />
+		<Unit filename="routers/chaos_router.cpp" />
+		<Unit filename="routers/chaos_router.hpp" />
+		<Unit filename="routers/event_router.cpp" />
+		<Unit filename="routers/event_router.hpp" />
+		<Unit filename="routers/iq_router.cpp" />
+		<Unit filename="routers/iq_router.hpp" />
+		<Unit filename="routers/router.cpp" />
+		<Unit filename="routers/router.hpp" />
+		<Unit filename="stats.cpp" />
+		<Unit filename="stats.hpp" />
+		<Unit filename="timed_module.hpp" />
+		<Unit filename="traffic.cpp" />
+		<Unit filename="traffic.hpp" />
+		<Unit filename="trafficmanager.cpp" />
+		<Unit filename="trafficmanager.hpp" />
+		<Unit filename="vc.cpp" />
+		<Unit filename="vc.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
