@@ -1,77 +1,27 @@
 import numpy as np
 import sys
-'''
-将一个数分解为多个素数乘积
-'''
-def get_factors(x: int):
-    assert x >= 2
-    res = []
-    i = 2
-    while i * i <= x:
-        while x % i == 0:
-            x = x // i
-            res.append(i)
-        i = i + 1
-    if x != 1:
-        res.append(x)
-    return res
 
+''' 
+build_finite_field
 '''
-快速幂算法，计算 (a^b)%mod
-'''
-def quick_pow(a: int, b: int, mod: int):
-    res = 1
-    tmp = a
-    while b > 0:
-        if (b & 1) != 0:
-            res = (res * tmp) % mod
-        tmp = (tmp * tmp) % mod
-        b = b >> 1
-    return res
-
-# '''
-# :param q :int, 必须为素数幂
-# 生成ξ,如果q%2==0 则返回3否则返回2
-# return
-# xi,  论文中的ξ，生成有限域Fq {ξ^t % q | t in N}
-# '''
-# def get_xi(q):
-#     assert isinstance(q, int) and len(set(get_factors(q))) == 1 and q >= 3, "q must be prime pow and >=3"
-#     return 3 if q%2==0 else 2
-'''
-:param q :int, 必须为素数 
-return 
-xi,  论文中的ξ，生成有限域Fq {ξ^t % q for  t in N} 
-'''
-def get_xi(q):
-    if q in [1,2]: return 1
-    assert isinstance(q, int) and len(set(get_factors(q))) == 1 and q >= 3, "q must be prime"
-    factors = get_factors(q)
-    oula = factors[0]-1
-    for i in factors[1:]:
-        oula = oula*i
-    for i in range(2,q):
-        if np.gcd(i,q) !=1: continue
-        flag = True
-        for j in range(2,oula):
-            if quick_pow(i,j,q)==1:
-                flag = False
-                break
-        if flag:
-            return i
-    raise ValueError('failed to find ξ for q = ',q)
-
-# def get_xi(q):
-#     assert isinstance(q, int) and len(set(get_factors(q))) == 1 and q >= 3, "q must be prime pow and >=3"
-#     return q-1
+def build_finite_field(q):
+    if q in [1,2]:
+        return {0:0,1:1},{0:0,1:1},1
+    from finitefield import GF
+    field = GF(q)
+    generate_element = field.gen()
+    elts_map = {}
+    for (i, v) in enumerate(field):
+        elts_map[i] = v
+    rev_elts_map = {v: k for k, v in elts_map.items()}
+    return elts_map,rev_elts_map,rev_elts_map[generate_element]
 '''
 计算X,X_
 '''
-def get_X(q, xi):
+def get_X(q, xi,elts_map,rev_elts_map):
     if q in [1,2]:
-        X = {1,}
-        X_ ={1,}
-    elif q % 4 == 1:
+        return {1,},{1,}
+    if q % 4 == 1:
         X = set(range(0, q - 1, 2))
         X_ = set(range(1, q - 1, 2))
     elif q % 4 == 3:
@@ -84,12 +34,12 @@ def get_X(q, xi):
         X_ = X1_.union(X2_)
     elif q % 4 == 0:
         l = q // 4
-        X = set(range(0, 4 * l - 1, 2))
-        X_ = set(range(1, 4 * l - 1, 2))
+        X = set(range(0, 4 * l  , 2))
+        X_ = set(range(1, 4 * l , 2))
     else:
         raise ValueError("q should be prime and >=3")
-    X = {quick_pow(xi, v, q) for v in X}
-    X_ = {quick_pow(xi, v, q) for v in X_}
+    X = {rev_elts_map[elts_map[xi]**v] for v in X}
+    X_ = {rev_elts_map[elts_map[xi]**v] for v in X_}
     return X, X_
 
 
@@ -99,8 +49,10 @@ because X*xi = X_  mod q,
 so if H x->x_(u) = v, then u * xi = v  mod q
 so v = u * xi  mod q 
 '''
-def get_H(q, xi):
-    h = {u: (u * xi) % q for u in range(q)}
+def get_H(q, xi,elts_map,rev_elts_map):
+    if q in [1,2]:
+        return {0:0,1:1}
+    h = { u:rev_elts_map[elts_map[u]*elts_map[xi]] for u in range(q)  }
     return h
 
 '''
@@ -125,11 +77,15 @@ Algorithm2,在每个cluster内部的super node 之间生成边。 任意cluster�
 返回值:
     edges类型为set<tuple>,表示node_i 与node_j之间有边相连
 '''
-def get_intra_cluster_edges(q, M, X,k):
+def get_intra_cluster_edges(q, M, X,k,elts_map,rev_elts_map):
+    if q ==2:
+        return {(1,0),}
+    if q ==1:
+        return set()
     edges = set()
     for i in range(q):
         for j in range(i + 1, q):
-            if (M[k][j][k] - M[k][i][k])%q in X:
+            if rev_elts_map[elts_map[M[k][j][k]] - elts_map[M[k][i][k]]] in X:
                 edges.add((j, i))
     return edges
 
@@ -139,6 +95,10 @@ def get_intra_cluster_edges(q, M, X,k):
     edges类型为set<tuple>,每个tuple包含两个元素a,b，表示cluster_i中的节点a与cluster_j中的节点b相连， 
 '''
 def get_inter_cluster_edges(q, M,i,j):
+    if q ==2:
+        return {(0,0),(1,1)}
+    if q ==1:
+        return {(0,0),}
     edges = set()
     for r in range(q):
         for s in range(q):
@@ -171,12 +131,7 @@ def get_diameter(edges_intra,edges_inter,q):
     # print(dis)
     return dis[max_ij[0]][max_ij[1]],max_ij,max_degree
 
-def quick_is_prime(x):
-    for i in range(30):
-        r = np.random.randint(2,x)
-        if quick_pow(r,x-1,x)!=1:
-            return False
-    return True
+
 
 class Node:
     node_id =0
@@ -238,7 +193,7 @@ class SuperNode:
         return ret
 
 class Cluster:
-    def __init__(self,q,a,p,M,X,k):
+    def __init__(self,q,a,p,M,X,k,elts_map,rev_elts_map):
         self.p=p
         self.q=q
         self.a = a
@@ -246,7 +201,7 @@ class Cluster:
         self.M = M
         self.X = X
         self.k = k
-        intra_edges = get_intra_cluster_edges(q,M,X,k)
+        intra_edges = get_intra_cluster_edges(q,M,X,k,elts_map,rev_elts_map)
         for u,v in intra_edges:
             self.supernodes[u].link(self.supernodes[v])
     def link(self,cluster):
@@ -268,11 +223,12 @@ class GalaxyFly:
         self.q=q
         self.a=a
         self.p=p
-        xi = get_xi(q)
-        X, X_ = get_X(q, xi)
-        H = get_H(q, xi)
+        elts_map,rev_elts_map,xi = build_finite_field(q)
+        X, X_ = get_X(q, xi,elts_map,rev_elts_map)
+        H = get_H(q, xi,elts_map,rev_elts_map)
         self.M = get_M(H, q, n)
-        self.clusters = [Cluster(q,a,p,self.M,X,k) for k in range(n)]
+        self.clusters = [Cluster(q,a,p,self.M,X,k,elts_map,rev_elts_map) for k in range(n)]
+
         for i in range(n):
             for j in range(i+1,n):
                 self.clusters[i].link(self.clusters[j])

@@ -19,3 +19,10 @@ and test it with booksim2
 python galaxyfly.py 3 5 2 2
 ``` 
 modify run.sh and anynet_config for your need
+
+## References
+
+Appreciate the great work from the following repositories:
+
+- [booksim/booksim2](https://github.com/booksim/booksim2)
+- [Robert-Campbell-256/Number-Theory-Python](https://github.com/Robert-Campbell-256/Number-Theory-Python) 
