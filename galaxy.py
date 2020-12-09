@@ -9,10 +9,13 @@ def build_finite_field(q):
         return {0:0,1:1},{0:0,1:1},1
     from finitefield import GF
     field = GF(q)
-    generate_element = field.gen()
     elts_map = {}
+    generate_element = None
     for (i, v) in enumerate(field):
         elts_map[i] = v
+        generate_set = set([v**k for k in range(q)])
+        if len(generate_set)==q-1:
+            generate_element = v
     rev_elts_map = {v: k for k, v in elts_map.items()}
     return elts_map,rev_elts_map,rev_elts_map[generate_element]
 '''
@@ -37,7 +40,7 @@ def get_X(q, xi,elts_map,rev_elts_map):
         X = set(range(0, 4 * l  , 2))
         X_ = set(range(1, 4 * l , 2))
     else:
-        raise ValueError("q should be prime and >=3")
+        raise ValueError("q should be prime pow and >=3")
     X = {rev_elts_map[elts_map[xi]**v] for v in X}
     X_ = {rev_elts_map[elts_map[xi]**v] for v in X_}
     return X, X_
