@@ -10,6 +10,8 @@ def build_finite_field(q):
     from finitefield import GF
     field = GF(q)
     elts_map = {}
+
+    # generate_element = field.gen()   #bug! don't do it
     generate_element = None
     for (i, v) in enumerate(field):
         elts_map[i] = v
