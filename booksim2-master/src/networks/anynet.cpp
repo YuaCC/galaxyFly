@@ -63,7 +63,7 @@ map<int, map<int, int> > global_dist;
 int network_size ;
 int galaxyfly_n,galaxyfly_q,galaxyfly_a,galaxyfly_p;
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 int max_queue_size = 0;
 #endif // DEBUG
