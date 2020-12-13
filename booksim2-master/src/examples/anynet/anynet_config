@@ -32,10 +32,10 @@
 topology = anynet;
 network_file = anynet_file;
 
-galaxyfly_n = 15;
+galaxyfly_n = 11;
 galaxyfly_q = 29;
 galaxyfly_a = 1;
-galaxyfly_p = 7;
+galaxyfly_p = 10;
 
 //single flit   packets
 packet_size = 1;
@@ -70,12 +70,12 @@ sim_count          = 1;
 sample_period  = 10000;
 
 routing_function = min;
-num_vcs     = 3;
+num_vcs     = 4;
 
 priority = none;
 traffic       = uniform;
 
-injection_rate = 0.8;
+injection_rate = 0.6;
 
 injection_rate_uses_flits=1;
 

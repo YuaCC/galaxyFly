@@ -59,8 +59,15 @@
 //this is a hack, I can't easily get the routing talbe out of the network
 map<int, map < int, set<int> > >  global_routing_table;
 vector<map<int,  map<int, pair<int,int> > > > global_router_list;
+map<int, map<int, int> > global_dist;
 int network_size ;
 int galaxyfly_n,galaxyfly_q,galaxyfly_a,galaxyfly_p;
+
+#define DEBUG
+#ifdef DEBUG
+int max_queue_size = 0;
+#endif // DEBUG
+
 AnyNet::AnyNet( const Configuration &config, const string & name )
     :  Network( config, name )
 {
@@ -259,65 +266,63 @@ int get_port(int src_router_id,int dst_node_id)
 void min_anynet( const Router *r, const Flit *f, int in_channel,
                  OutputSet *outputs, bool inject )
 {
-  assert(gNumVCs==3);
     int out_port=-1;
     if(!inject)
     {
-        int min_port = get_port(r->GetID(),f->dest);
-        int cluster = r->GetID()/galaxyfly_a/galaxyfly_q;
-        int inter_router = f->intm;
-        int inter_cluster = inter_router/galaxyfly_a/galaxyfly_q;
-        int inter_node = inter_router*galaxyfly_p;
-        int nonmin_port = get_port(r->GetID(),inter_node);
-        int dest_cluster = f->dest/galaxyfly_p/galaxyfly_a/galaxyfly_q;
-        if (f->hops ==0)
-        {
-            //this constant biases the adaptive decision toward minimum routing
-            //negative value woudl biases it towards nonminimum routing
-            int adaptive_threshold = 30;
-            int min_queue_size = max(r->GetUsedCredit(min_port), 0) ;
-            int nonmin_queue_size = max(r->GetUsedCredit(nonmin_port), 0);
-            if (dest_cluster != cluster&&inter_cluster != cluster&& inter_cluster!=dest_cluster &&(1 * min_queue_size ) >= (2 * nonmin_queue_size)+adaptive_threshold )
-                f->ph =2;
-            else
-                f->ph=0;
+        if (f->hops==0){
+            int dst_router = f->dest / galaxyfly_p;
+            int min_dis = global_dist[r->GetID()][dst_router];
+            int nonmin_router = -1;
+            int nonmin_queue_size = 0x1fffffff;
+            int nonmin_port = -1;
+            for (map<int, pair<int,int > >::iterator it = global_router_list[1][r->GetID()].begin(); it != global_router_list[1][r->GetID()].end(); it ++){
+                int intm_router = it->first;
+                int intm_port = it->second.first;
+                int intm_dis = global_dist[intm_router][dst_router];
+                int queue_size =max(r->GetUsedCredit(intm_port), 0);
+                if (intm_dis <= min_dis){
+                    nonmin_router = queue_size<nonmin_queue_size ?intm_router:nonmin_router;
+                    nonmin_port = queue_size<nonmin_queue_size ?intm_port:nonmin_port;
+                    nonmin_queue_size = queue_size<nonmin_queue_size ?queue_size:nonmin_queue_size;
+                }
+
+            }
+            f->intm = nonmin_router;
+            int min_port =get_port(r->GetID(),f->dest);
+            int min_queue_size = max(r->GetUsedCredit(min_port), 0);
+
+            int nonmin_supernode = nonmin_router/galaxyfly_a;
+            int supernode = r->GetID()/galaxyfly_a;
+            int dest_supernode = f->dest/galaxyfly_p/galaxyfly_a;
+            if (supernode == dest_supernode || min_queue_size<2*nonmin_queue_size+10)
+                f->ph=1;
+            else{
+                f->ph =0;
+                #ifdef DEBUG
+                max_queue_size = max_queue_size> min_queue_size?max_queue_size:min_queue_size;
+                cout<<"src router " << r->GetID() << " intm router " <<nonmin_router <<" dest_router "<<f->dest/galaxyfly_p<<endl;
+                cout<<"nonmin_queue_size " << nonmin_queue_size << " min_queue_size " <<min_queue_size << " max_queue_size " <<max_queue_size<<endl;
+                #endif // DEBUG
+            }
         }
-        else if (f->ph ==2 && inter_cluster== cluster)
-                    f->ph =1;
-        if(f->ph ==0 || f->ph==1) out_port =get_port(r->GetID(),f->dest);
-        if(f->ph ==2) out_port =get_port(r->GetID(),inter_node);
+        int intm_node = f->intm * galaxyfly_p;
+        int intm_supernode = f->intm /galaxyfly_a;
+        int supernode = r->GetID() / galaxyfly_a;
+        if (intm_supernode == supernode)
+            f->ph=1;
+
+        if (f->ph==0)
+            out_port = get_port(r->GetID(),intm_node);
+        else
+            out_port = get_port(r->GetID(),f->dest);
+
+
         outputs->Clear( );
         outputs->AddRange( out_port,  0, gNumVCs-1 );
     }
     else {
-
-        int inter_router = rand() % network_size;
-        f-> intm = inter_router;
         outputs->Clear( );
-
-        int vcBegin = 0, vcEnd = gNumVCs-1;
-        if ( f->type == Flit::READ_REQUEST )
-        {
-            vcBegin = gReadReqBeginVC;
-            vcEnd   = gReadReqEndVC;
-        }
-        else if ( f->type == Flit::WRITE_REQUEST )
-        {
-            vcBegin = gWriteReqBeginVC;
-            vcEnd   = gWriteReqEndVC;
-        }
-        else if ( f->type ==  Flit::READ_REPLY )
-        {
-            vcBegin = gReadReplyBeginVC;
-            vcEnd   = gReadReplyEndVC;
-        }
-        else if ( f->type ==  Flit::WRITE_REPLY )
-        {
-            vcBegin = gWriteReplyBeginVC;
-            vcEnd   = gWriteReplyEndVC;
-        }
-        outputs->AddRange( out_port, vcBegin, vcEnd );
-
+        outputs->AddRange( out_port, 0, gNumVCs-1 );
     }
 
 
@@ -388,6 +393,7 @@ void AnyNet::buildRoutingTable()
                 global_routing_table[i][node_id] = port[i][router_id];
         }
     global_router_list = router_list;
+    global_dist = dist;
     cout<<"======================== Routing table  built successfully=====================\n";
 }
 
