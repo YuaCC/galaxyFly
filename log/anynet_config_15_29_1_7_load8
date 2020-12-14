@@ -70,7 +70,7 @@ sim_count          = 1;
 sample_period  = 10000;
 
 routing_function = min;
-num_vcs     = 3;
+num_vcs     = 4;
 
 priority = none;
 traffic       = uniform;
