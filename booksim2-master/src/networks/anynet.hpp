@@ -37,6 +37,7 @@
 
 class AnyNet : public Network {
 
+protected:
   string file_name;
   //associtation between  nodes and routers
   map<int, int > node_list;

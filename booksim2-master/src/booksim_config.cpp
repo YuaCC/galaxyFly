@@ -41,6 +41,10 @@ BookSimConfig::BookSimConfig( )
   // Network options
   //========================================================
 
+  _int_map["galaxyfly_n"] = 1; //galaxyfly_n
+  _int_map["galaxyfly_q"] = 1; //galaxyfly_n
+  _int_map["galaxyfly_a"] = 1; //galaxyfly_n
+  _int_map["galaxyfly_p"] = 1; //galaxyfly_n
   // Channel length listing file
   AddStrField( "channel_file", "" ) ;
 
@@ -52,10 +56,6 @@ BookSimConfig::BookSimConfig( )
   _int_map["k"] = 8; //network radix
   _int_map["n"] = 2; //network dimension
   _int_map["c"] = 1; //concentration
-  _int_map["galaxyfly_n"] = 1; //concentration
-  _int_map["galaxyfly_q"] = 1; //concentration
-  _int_map["galaxyfly_a"] = 1; //concentration
-  _int_map["galaxyfly_p"] = 1; //concentration
   AddStrField( "routing_function", "none" );
 
   //simulator tries to correclty adjust latency for node/router placement

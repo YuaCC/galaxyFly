@@ -12,7 +12,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="examples/anynet/anynet_config" />
+				<Option parameters="examples/galaxyfly/galaxyfly_config" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -111,6 +111,8 @@
 		<Unit filename="networks/flatfly_onchip.hpp" />
 		<Unit filename="networks/fly.cpp" />
 		<Unit filename="networks/fly.hpp" />
+		<Unit filename="networks/galaxyfly.cpp" />
+		<Unit filename="networks/galaxyfly.hpp" />
 		<Unit filename="networks/kncube.cpp" />
 		<Unit filename="networks/kncube.hpp" />
 		<Unit filename="networks/network.cpp" />
