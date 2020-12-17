@@ -1,5 +1,5 @@
 # GalaxyFly
- unofficial implementation of Galaxyfly: A Novel Family of Flexible-Radix Low-Diameter Topologies for Large-Scales Interconnection Networks
+ unofficial implementation of [Galaxyfly: A Novel Family of Flexible-Radix Low-Diameter Topologies for Large-Scales Interconnection Networks](https://github.com/YuaCC/galaxyFly/raw/master/20160526_ICS2016_Galaxyfly%20A%20Novel%20Family%20of%20Flexible-Radix%20Low-Diameter%20Topologies%20for%20Large-Scales%20Interconnection%20Networks.pdf)
 
 and test it with booksim2
  
