@@ -18,7 +18,7 @@ and test it with booksim2
 #python galaxyfly.py n q a p
 python galaxyfly.py 3 5 2 2
 ``` 
-modify run.sh and anynet_config for your need
+modify run.sh and galaxyfly_config for your need
 
 ## References
 
